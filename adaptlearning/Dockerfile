@@ -8,4 +8,5 @@ ADD config.json conf/config.json
 RUN git config --global user.name "Your Name"; \
 	git config --global user.email "youremail@example.com"
 ADD startup.sh /opt/adapt_authoring/
+EXPOSE 5000
 ENTRYPOINT ["./startup.sh"]
