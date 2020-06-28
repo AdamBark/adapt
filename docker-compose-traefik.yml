@@ -1,0 +1,36 @@
+version: '2.1'
+services:
+  database:
+    image: mongo
+    restart: always
+    volumes:
+      - db:/data/db
+  adapt:
+    build: ./adaptlearning
+    restart: always
+    volumes:
+     - adapt:/opt/adapt_authoring
+    networks:
+      - default
+      - reverseproxy
+    labels:
+      - 'traefik.http.routers.adapt.entryPoints=web'
+      - 'traefik.http.routers.adapt.rule.Host("${FQDN:?Domain not set}")'
+      - 'traefik.http.routers.adapt.middlewares=tohttps'
+      - 'traefik.http.routers.adaptsecure.entryPoints=websecure'
+      - 'traefik.http.routers.adaptsecure.rule=Host("${FQDN:?Domain name not set}")'
+      - 'traefik.http.routers.adaptsecure.tls=true'
+      - 'traefik.http.routers.adaptsecure.tls.certResolver=le'
+      - 'traefik.http.middlewares.tohttps.redirectscheme.scheme=https'
+      - 'traefik.http.middlewares.tohttps.redirectscheme.permanent=true'
+      - 'traefik.http.services.adapt.loadbalancer.server.port=5000'
+      - 'traefik.docker.network=edgerouter_default'
+
+volumes:
+  db:
+  adapt:
+
+networks:
+  reverseproxy:
+    external:
+      name: edgerouter_default
