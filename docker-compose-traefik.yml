@@ -6,7 +6,7 @@ services:
     volumes:
       - db:/data/db
   adapt:
-    build: ./adaptlearning
+    image: 10bitadam/adapt
     restart: always
     volumes:
      - adapt:/opt/adapt_authoring
